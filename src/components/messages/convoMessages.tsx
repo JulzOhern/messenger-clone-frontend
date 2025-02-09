@@ -116,13 +116,29 @@ export function ConvoMessages({ messages }: ConvoMessageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const isInGroupChat = messages?.userIds?.includes(user?.id);
 
-  // useEffect to scroll to bottom
+  // scroll to bottom when conversationId changes
   useEffect(() => {
     if (scrollRef.current) {
       const ref = scrollRef.current;
       ref.scrollTop = ref.scrollHeight;
     };
-  }, [conversationId, messages?.messages?.length]);
+  }, [conversationId]);
+
+  // scroll to bottom only in me if i send a message
+  useEffect(() => {
+    if (scrollRef.current) {
+      const ref = scrollRef.current;
+      const isLatestMessageMine = messages?.messages?.[messages?.messages?.length - 1]?.userId === user.id;
+
+      if (isBottom) {
+        ref.scrollTop = ref.scrollHeight;
+      };
+
+      if (isLatestMessageMine) {
+        ref.scrollTop = ref.scrollHeight;
+      };
+    }
+  }, [messages?.messages, isBottom]);
 
   const handleChangeGcName = async () => {
     try {
@@ -391,7 +407,7 @@ export function ConvoMessages({ messages }: ConvoMessageProps) {
         </div>
       )}
 
-      <div className="space-y-1 mt-10 px-4 pt-4 pb-2">
+      <div className="space-y-0.5 mt-10 px-4 pt-4 pb-2">
         {messages?.messages
           ?.filter((m) => !m.deletedByIds.includes(user.id))
           ?.map((message, index) => (
@@ -416,8 +432,8 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
   const messageBeforeMyMessage = messages?.[index - 1];
   const messageAfterMyMessage = messages?.[index + 1];
 
-  const isMessageBeforeMyMessage = messageBeforeMyMessage?.userId !== message.userId;
-  const isMessageAfterMyMessage = messageAfterMyMessage?.userId !== message.userId;
+  const isPreviousMessageMyMessage = messageBeforeMyMessage?.userId === message.userId;
+  const isNextMessageMyMessage = messageAfterMyMessage?.userId === message.userId;
   const isMyMessage = user.id === message.userId;
 
   const replyDateTime = useMemo(() => {
@@ -467,8 +483,8 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
 
   const firstChatTimeDifferenceInMinutes = useMemo(() => {
     if (messageBeforeMyMessage) {
-      const currentMessagesDate = new Date(message.createdAt);
       const previousToCurrentMessageDate = new Date(messageBeforeMyMessage.createdAt);
+      const currentMessagesDate = new Date(message.createdAt);
       const result = datetimeDifference(currentMessagesDate, previousToCurrentMessageDate);
 
       if (result.minutes > 3) return true;
@@ -479,7 +495,7 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
   return (
     <div>
       {index === 0 && (
-        <p className="text-xs text-center p-4 text-muted-foreground">
+        <p className="text-sm text-center p-4 font-semibold">
           {formatFirstChatTime(message.createdAt)}
         </p>
       )}
@@ -487,7 +503,8 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
       <div
         className={cn("flex items-end gap-2",
           user.id === message.userId ? "justify-end" : "justify-start",
-          conversation?.isGroupChat && isMessageAfterMyMessage && !isMyMessage && 'mb-4'
+          conversation?.isGroupChat && messageAfterMyMessage && !isNextMessageMyMessage && isMyMessage && !replyDateTime && 'mb-4',
+          conversation?.isGroupChat && messageAfterMyMessage && !isNextMessageMyMessage && !isMyMessage && !replyDateTime && 'mb-4',
         )}
       >
         {/** Avatar */}
@@ -497,9 +514,9 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
               src={message.user.profile || noProfile()}
               alt="Profile"
               className={cn("rounded-full w-7 h-7 object-cover",
-                isMessageAfterMyMessage ? 'visible' : 'invisible')}
+                !isNextMessageMyMessage ? 'visible' : 'invisible')}
             />
-            {isMessageAfterMyMessage && isActive && (
+            {!isNextMessageMyMessage && isActive && (
               <ActiveIcon style="right-0 w-[.6rem] h-[.6rem]" />
             )}
           </div>
@@ -513,61 +530,85 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
               !isMyMessage && 'items-start',
             )}
           >
-            {conversation?.isGroupChat && !isMyMessage && isMessageBeforeMyMessage && (
-              <p className="text-xs ml-2 text-muted-foreground">{message.user.username}</p>
+            {conversation?.isGroupChat && !isMyMessage && !isPreviousMessageMyMessage && (
+              <p className="text-xs ml-2 font-semibold">{message.user.username}</p>
             )}
             {message?.text && (
               <p
-                className={cn("whitespace-pre-wrap break-words break-all rounded-[20px] px-3 py-1",
-                  user.id === message.userId ? 'bg-blue-600 text-white' : 'bg-[#e3e3e3] dark:bg-[#3b3a3a]',
-                  // my message
-                  lastChatTimeDifferenceInMinutes && isMyMessage && 'rounded-tr',
-                  firstChatTimeDifferenceInMinutes && isMyMessage && 'rounded-br',
-                  !lastChatTimeDifferenceInMinutes && !firstChatTimeDifferenceInMinutes && isMyMessage && 'rounded-r',
-                  !messageBeforeMyMessage?.text && messageAfterMyMessage?.text && isMyMessage && 'rounded-br rounded-tr-[20px]',
-                  messageBeforeMyMessage?.text && !messageAfterMyMessage?.text && isMyMessage && 'rounded-tr rounded-br-[20px]',
-                  !isMessageBeforeMyMessage && isMessageAfterMyMessage && isMyMessage && 'rounded-tr rounded-br-[20px]',
-                  isMessageBeforeMyMessage && !isMessageAfterMyMessage && isMyMessage && 'rounded-br rounded-tr-[20px]',
-                  lastChatTimeDifferenceInMinutes && firstChatTimeDifferenceInMinutes && isMyMessage && 'rounded-[20px]',
-                  !messageBeforeMyMessage?.text && !messageAfterMyMessage?.text && isMyMessage && 'rounded-[20px]',
-                  !messageBeforeMyMessage?.text && lastChatTimeDifferenceInMinutes && isMyMessage && 'rounded-[20px]',
-                  !messageBeforeMyMessage?.text && isMessageAfterMyMessage && isMyMessage && 'rounded-[20px]',
-                  isMyMessage && isMessageBeforeMyMessage && !messageAfterMyMessage?.text && 'rounded-[20px]',
-                  isMessageAfterMyMessage && isMessageBeforeMyMessage && isMyMessage && 'rounded-[20px]',
-                  // other message
-                  lastChatTimeDifferenceInMinutes && !isMyMessage && 'rounded-tl',
-                  firstChatTimeDifferenceInMinutes && !isMyMessage && 'rounded-bl',
-                  !lastChatTimeDifferenceInMinutes && !firstChatTimeDifferenceInMinutes && !isMyMessage && 'rounded-l',
-                  !messageBeforeMyMessage?.text && messageAfterMyMessage?.text && !isMyMessage && 'rounded-bl rounded-tl-[20px] ',
-                  messageBeforeMyMessage?.text && !messageAfterMyMessage?.text && !isMyMessage && 'rounded-tl rounded-bl-[20px]',
-                  !isMessageBeforeMyMessage && isMessageAfterMyMessage && !isMyMessage && 'rounded-tl rounded-bl-[20px]',
-                  isMessageBeforeMyMessage && !isMessageAfterMyMessage && !isMyMessage && 'rounded-bl rounded-tl-[20px]',
-                  lastChatTimeDifferenceInMinutes && firstChatTimeDifferenceInMinutes && !isMyMessage && 'rounded-[20px]',
-                  !messageBeforeMyMessage?.text && !messageAfterMyMessage?.text && !isMyMessage && 'rounded-[20px]',
-                  !messageBeforeMyMessage?.text && lastChatTimeDifferenceInMinutes && !isMyMessage && 'rounded-[20px]',
-                  !messageBeforeMyMessage?.text && isMessageAfterMyMessage && !isMyMessage && 'rounded-[20px]',
-                  !isMyMessage && isMessageBeforeMyMessage && !messageAfterMyMessage?.text && 'rounded-[20px]',
-                  isMessageAfterMyMessage && isMessageBeforeMyMessage && !isMyMessage && 'rounded-[20px]'
+                className={cn("whitespace-pre-wrap break-words break-all px-3.5 py-2",
+                  user.id === message.userId ? 'bg-blue-600 text-white rounded-r rounded-l-[20px]' : 'bg-[#e3e3e3] dark:bg-[#3b3a3a] rounded-l rounded-r-[20px]',
+                  // messages style
+                  (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
+                  (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
+                  // full rounded
+                  (!messageBeforeMyMessage || messageBeforeMyMessage?.files?.length > 1 || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || (message?.files?.length && message?.text) || messageAfterMyMessage?.files?.length > 1 || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
                 )}
               >
-                {message.text} {new Date(message.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+                {message.text}
               </p>
             )}
             {message?.gif && (
-              <img src={message.gif} loading="eager" alt="GIF" className="rounded-[20px]" />
+              <img
+                src={message.gif}
+                loading="eager"
+                alt="GIF"
+                className={cn("rounded-l rounded-r-[20px]",
+                  user.id === message.userId && 'rounded-r rounded-l-[20px]',
+                  (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
+                  (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
+
+                  // full rounded
+                  (!messageBeforeMyMessage || messageBeforeMyMessage?.files?.length > 1 || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || (message?.files?.length && message?.text) || messageAfterMyMessage?.files?.length > 1 || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
+                )}
+              />
             )}
-            {message?.files && message.files.map((file) => (
-              <img key={file} src={file} loading="eager" alt="File" className="rounded-[20px]" />
-            ))}
+            {message?.files?.length === 1 && (
+              message?.files?.map((file) => (
+                <img
+                  key={file}
+                  src={file}
+                  loading="eager"
+                  alt="File"
+                  className={cn("rounded-l rounded-r-[20px]",
+                    user.id === message.userId && 'rounded-r rounded-l-[20px]',
+                    (message?.text && message?.files.length) && (isMyMessage && '!rounded-r' || !isMyMessage && '!rounded-l'),
+                    (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
+                    (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
+
+                    // full rounded
+                    (!messageBeforeMyMessage || messageBeforeMyMessage?.files?.length > 1 || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || (message?.files?.length && message?.text) || messageAfterMyMessage?.files?.length > 1 || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
+                  )}
+                />
+              ))
+            )}
+            {message?.files?.length > 1 && (
+              <div className="relative w-[14rem] h-[14rem]">
+                {message?.files?.map((file, idx) => (
+                  <div key={file} className={cn("absolute inset-2 border border-muted-foreground rounded-[20px] z-[10]",
+                    idx === 0 && 'rotate-[4deg] bottom-3',
+                    idx === 1 && '-rotate-[4deg] bottom-3',
+                    idx === 2 && 'rotate-[4deg] bottom-3',
+                    idx === 3 && '-rotate-[4deg] bottom-3',
+                  )}>
+                    <img
+                      src={file}
+                      loading="eager"
+                      alt="File"
+                      className="w-[13rem] h-[13rem] object-cover rounded-[20px]"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
             {!!message.quickReaction.length && (
-              <div>
+              <div className={cn("my-3", !messageAfterMyMessage && 'mb-0')}>
                 <QuickReactionSvg quickReactionSize={message.quickReaction[1]} />
               </div>
             )}
           </div>
 
           {/** Profile of user that seen the message */}
-          {message.seenByIds.some((id) => !messageAfterMyMessage?.seenByIds.includes(id)) && (
+          {message?.seenByIds?.some((id) => !messageAfterMyMessage?.seenByIds.includes(id)) && (
             <div className="flex items-center gap-1">
               {message.seenBy.filter((u) => u.id !== user.id && !messageAfterMyMessage?.seenByIds.includes(u.id))?.map((user) => (
                 <Fragment key={user.id}>
@@ -608,21 +649,8 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
       )}
 
       {replyDateTime && (
-        <p className="text-xs text-center p-4 text-muted-foreground">{replyDateTime}</p>
+        <p className="text-sm text-center p-4 font-semibold">{replyDateTime}</p>
       )}
     </div >
   )
 }
-
-
-
-/* isMessageBeforeMyMessage && !isMyMessage && 'rounded-bl',
-isMessageAfterMyMessage && !isMyMessage && 'rounded-tl',
-!isMessageBeforeMyMessage && !isMessageAfterMyMessage && !isMyMessage && 'rounded-l',
-isMessageBeforeMyMessage && isMessageAfterMyMessage && !isMyMessage && 'rounded-[20px]',
-replyDateTime && "rounded-[20px]",
-isMessageBeforeMyMessage && isMyMessage && 'rounded-br',
-isMessageAfterMyMessage && isMyMessage && 'rounded-tr',
-!isMessageBeforeMyMessage && !isMessageAfterMyMessage && isMyMessage && 'rounded-r',
-isMessageBeforeMyMessage && isMessageAfterMyMessage && isMyMessage && 'rounded-[20px]' 
-*/

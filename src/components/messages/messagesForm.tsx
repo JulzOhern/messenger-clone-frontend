@@ -112,12 +112,12 @@ export function MessagesForm({
 
   async function handleSendGift(gif: TenorImage) {
     try {
+      setOpenGif(false);
       const resp = await axiosClient.post("/send-gif", {
         conversationId,
         gif: gif.url
       });
       const data = resp.data;
-      setOpenGif(false);
       socket.current?.emit("chat", data);
       queryClient.setQueryData(['my-conversations', user.id], (old: MyConversationsType[]) => (
         old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo)
