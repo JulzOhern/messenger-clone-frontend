@@ -42,7 +42,7 @@ interface MessagesRowProps {
     text: string;
     gif: string;
     seenByIds: string[];
-    files: string[];
+    file: string;
     quickReaction: string[];
     deletedByIds: string[];
     notif: {
@@ -503,8 +503,8 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
       <div
         className={cn("flex items-end gap-2",
           user.id === message.userId ? "justify-end" : "justify-start",
-          conversation?.isGroupChat && messageAfterMyMessage && !isNextMessageMyMessage && isMyMessage && !replyDateTime && 'mb-4',
-          conversation?.isGroupChat && messageAfterMyMessage && !isNextMessageMyMessage && !isMyMessage && !replyDateTime && 'mb-4',
+          messageAfterMyMessage && !isNextMessageMyMessage && isMyMessage && !replyDateTime && 'mb-4',
+          messageAfterMyMessage && !isNextMessageMyMessage && !isMyMessage && !replyDateTime && 'mb-4',
         )}
       >
         {/** Avatar */}
@@ -537,11 +537,12 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
               <p
                 className={cn("whitespace-pre-wrap break-words break-all px-3.5 py-2",
                   user.id === message.userId ? 'bg-blue-600 text-white rounded-r rounded-l-[20px]' : 'bg-[#e3e3e3] dark:bg-[#3b3a3a] rounded-l rounded-r-[20px]',
-                  // messages style
+                  // rounded bottom
                   (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
+                  // rounded top  
                   (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
-                  // full rounded
-                  (!messageBeforeMyMessage || messageBeforeMyMessage?.files?.length > 1 || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || (message?.files?.length && message?.text) || messageAfterMyMessage?.files?.length > 1 || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
+                  // rounded 20px
+                  (!messageBeforeMyMessage || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
                 )}
               >
                 {message.text}
@@ -554,51 +555,30 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
                 alt="GIF"
                 className={cn("rounded-l rounded-r-[20px]",
                   user.id === message.userId && 'rounded-r rounded-l-[20px]',
+                  //
                   (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
+                  //
                   (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
-
-                  // full rounded
-                  (!messageBeforeMyMessage || messageBeforeMyMessage?.files?.length > 1 || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || (message?.files?.length && message?.text) || messageAfterMyMessage?.files?.length > 1 || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
+                  // 
+                  (!messageBeforeMyMessage || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
                 )}
               />
             )}
-            {message?.files?.length === 1 && (
-              message?.files?.map((file) => (
-                <img
-                  key={file}
-                  src={file}
-                  loading="eager"
-                  alt="File"
-                  className={cn("rounded-l rounded-r-[20px]",
-                    user.id === message.userId && 'rounded-r rounded-l-[20px]',
-                    (message?.text && message?.files.length) && (isMyMessage && '!rounded-r' || !isMyMessage && '!rounded-l'),
-                    (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
-                    (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
-
-                    // full rounded
-                    (!messageBeforeMyMessage || messageBeforeMyMessage?.files?.length > 1 || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || (message?.files?.length && message?.text) || messageAfterMyMessage?.files?.length > 1 || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
-                  )}
-                />
-              ))
-            )}
-            {message?.files?.length > 1 && (
-              <div className="relative w-[14rem] h-[14rem]">
-                {message?.files?.map((file, idx) => (
-                  <div key={file} className={cn("absolute inset-2 border border-muted-foreground rounded-[20px] z-[10]",
-                    idx === 0 && 'rotate-[4deg] bottom-3',
-                    idx === 1 && '-rotate-[4deg] bottom-3',
-                    idx === 2 && 'rotate-[4deg] bottom-3',
-                    idx === 3 && '-rotate-[4deg] bottom-3',
-                  )}>
-                    <img
-                      src={file}
-                      loading="eager"
-                      alt="File"
-                      className="w-[13rem] h-[13rem] object-cover rounded-[20px]"
-                    />
-                  </div>
-                ))}
-              </div>
+            {message?.file && (
+              <img
+                src={message.file}
+                loading="eager"
+                alt="File"
+                className={cn("rounded-l rounded-r-[20px]",
+                  user.id === message.userId && 'rounded-r rounded-l-[20px]',
+                  // rounded bottom
+                  (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
+                  // rounded top  
+                  (lastChatTimeDifferenceInMinutes || !isNextMessageMyMessage || !!messageAfterMyMessage?.quickReaction.length) && (isMyMessage && 'rounded-[20px] rounded-tr' || !isMyMessage && 'rounded-[20px] rounded-tl'),
+                  // rounded 20px
+                  (!messageBeforeMyMessage || !isPreviousMessageMyMessage || messageBeforeMyMessage?.quickReaction?.length || firstChatTimeDifferenceInMinutes) && (!messageAfterMyMessage || !isNextMessageMyMessage || messageAfterMyMessage?.quickReaction?.length || lastChatTimeDifferenceInMinutes) && (isMyMessage && 'rounded-[20px]' || !isMyMessage && 'rounded-[20px]'),
+                )}
+              />
             )}
             {!!message.quickReaction.length && (
               <div className={cn("my-3", !messageAfterMyMessage && 'mb-0')}>

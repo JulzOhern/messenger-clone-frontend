@@ -21,7 +21,7 @@ export interface MessagesType {
     text: string;
     gif: string;
     seenByIds: string[];
-    files: string[];
+    file: string;
     quickReaction: string[];
     deletedByIds: string[];
     notif: {

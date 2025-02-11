@@ -147,6 +147,7 @@ export function MessagesForm({
         setText("");
         setFiles([]);
         socket.current?.emit("chat", data);
+        queryClient.invalidateQueries({ queryKey: ['my-conversations'] });
         queryClient.setQueryData(['my-conversations', user.id], (old: MyConversationsType[]) => (
           old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo)
         ));
@@ -229,17 +230,6 @@ export function MessagesForm({
       ref.focus();
     };
   };
-
-  useEffect(() => {
-    socket.current?.on("chat", (data) => {
-      if (data?.userIds?.includes(user?.id)) {
-        queryClient.setQueryData(['my-conversations', user?.id], (old: MyConversationsType[]) => (
-          !old.some((c) => c.id === data.id) ? [...old, data] : old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo)
-        ));
-      };
-      queryClient.setQueryData(['convo-messages', data.id], data);
-    });
-  }, [queryClient, user.id]);
 
   return (
     <div className="flex items-end gap-2 p-3">

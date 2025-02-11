@@ -34,7 +34,7 @@ export interface MyConversationsType {
     userId: string;
     conversationId: string;
     seenByIds: string[];
-    files: string[];
+    file: string;
     quickReaction: string[];
     deletedByIds: string[];
     notif: {
