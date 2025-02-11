@@ -5,6 +5,7 @@ import { Outlet, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { axiosClient } from "@/lib/axiosClient";
 import { New } from "@/components/new";
+import BottomNavigation from "@/components/bottomNavigation";
 
 export interface MessagesType {
   id: string;
@@ -109,7 +110,7 @@ export default function MainLayout() {
   });
 
   return (
-    <div className="flex flex-col gap-4 p-4 min-h-screen bg-gray-100 dark:bg-black">
+    <div className="flex flex-col md:p-4 min-h-screen bg-gray-100 dark:bg-black">
       <div className="flex flex-1 gap-4">
         <Sidebar />
         <Outlet />
@@ -124,14 +125,7 @@ export default function MainLayout() {
         <ConvoInformation conversation={messages} />
       </div>
 
-      {/* <div className='flex justify-center'>
-        <div className='flex items-center justify-center gap-5 py-2 px-5 bg-card rounded-full'>
-          <p>Chats</p>
-          <p>Archive</p>
-          <p>Profile</p>
-          <p>darkmode</p>
-        </div>
-      </div> */}
+      <BottomNavigation />
     </div>
   );
 }

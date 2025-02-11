@@ -528,6 +528,7 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
           <div
             className={cn("flex flex-col items-end gap-1 max-w-[28rem]",
               !isMyMessage && 'items-start',
+              isMyMessage ? 'ml-24' : 'mr-24',
             )}
           >
             {conversation?.isGroupChat && !isMyMessage && !isPreviousMessageMyMessage && (
@@ -536,7 +537,8 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
             {message?.text && (
               <p
                 className={cn("whitespace-pre-wrap break-words break-all px-3.5 py-2",
-                  user.id === message.userId ? 'bg-blue-600 text-white rounded-r rounded-l-[20px]' : 'bg-[#e3e3e3] dark:bg-[#3b3a3a] rounded-l rounded-r-[20px]',
+                  isMyMessage ? 'bg-blue-600 text-white rounded-r rounded-l-[20px]' : 'bg-[#e3e3e3] dark:bg-[#3b3a3a] rounded-l rounded-r-[20px]',
+                  isMyMessage ? 'ml-29' : '',
                   // rounded bottom
                   (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
                   // rounded top  
@@ -554,7 +556,7 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
                 loading="eager"
                 alt="GIF"
                 className={cn("rounded-l rounded-r-[20px]",
-                  user.id === message.userId && 'rounded-r rounded-l-[20px]',
+                  isMyMessage && 'rounded-r rounded-l-[20px]',
                   //
                   (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
                   //
@@ -570,7 +572,7 @@ export function MessagesRow({ conversation, message, index }: MessagesRowProps) 
                 loading="eager"
                 alt="File"
                 className={cn("rounded-l rounded-r-[20px]",
-                  user.id === message.userId && 'rounded-r rounded-l-[20px]',
+                  isMyMessage && 'rounded-r rounded-l-[20px]',
                   // rounded bottom
                   (firstChatTimeDifferenceInMinutes || !isPreviousMessageMyMessage || !!messageBeforeMyMessage?.quickReaction?.length) && (isMyMessage && 'rounded-[20px] rounded-br' || !isMyMessage && 'rounded-[20px] rounded-bl'),
                   // rounded top  

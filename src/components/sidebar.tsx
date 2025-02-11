@@ -29,7 +29,7 @@ export function Sidebar() {
   const { setOpen, isOpen } = useSidebar();
 
   return (
-    <div className={cn("lg:flex hidden flex-col justify-between w-[2.8rem]", isOpen && 'w-[15rem]')}>
+    <div className={cn("md:flex hidden flex-col justify-between w-[2.8rem]", isOpen && 'w-[15rem]')}>
       <div className="flex flex-col overflow-hidden">
         {sideBarLinks.map((item) => (
           <Link key={item.href} to={item.href} className={cn("flex items-center h-11 rounded-lg hover:bg-[#e3e3e3] dark:hover:bg-[#2a2929] text-muted-foreground",

@@ -143,15 +143,18 @@ export function Chats() {
 
   const notArchiveConvos = myConvo.data?.filter((convo) => !convo.archiveByIds.includes(user.id));
 
-  useEffect(() => {
-    if (myConvo.data?.length && !conversationId && pathname === '/') {
-      const firstConvoId = myConvo.data[0].id;
-      navigate("/?c=" + firstConvoId);
-    };
-  }, [myConvo.data?.length, conversationId, pathname]);
+  /*  useEffect(() => {
+     if (myConvo.data?.length && !conversationId && pathname === '/') {
+       const firstConvoId = myConvo.data[0].id;
+       navigate("/?c=" + firstConvoId);
+     };
+   }, [myConvo.data?.length, conversationId, pathname]); */
 
   return (
-    <div className="flex flex-col bg-card rounded-xl flex-1 max-w-[26rem] shadow-sm">
+    <div className={cn("flex flex-col bg-card md:rounded-xl flex-1 lg:max-w-[26rem] shadow-sm",
+      conversationId && 'lg:flex hidden',
+      pathname === '/new' && 'lg:flex hidden'
+    )}>
       <div className="flex flex-col gap-3 px-4 pt-2">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold">Chats</h1>

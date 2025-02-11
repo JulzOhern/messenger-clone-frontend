@@ -6,6 +6,8 @@ import { NoChatsSelectedSvg } from "@/utils/noChatsSelectedSvg";
 import { useSearchParams } from "react-router-dom";
 import { useUserContext } from "@/providers/userProvider";
 import { LuLoaderCircle } from "react-icons/lu";
+import { useOpenConvoInformation } from "@/lib/zustand";
+import { cn } from "@/lib/utils";
 
 interface MessagesProps {
 	messages: MessagesType | undefined;
@@ -19,12 +21,15 @@ export function Messages({
 	const [searchParams] = useSearchParams()
 	const conversationId = searchParams.get("c");
 	const { user } = useUserContext();
+	const { isOpen } = useOpenConvoInformation();
 
 	const isInGroupChat = messages?.userIds?.includes(user?.id);
 
 	if (!conversationId) {
 		return (
-			<div className="flex flex-col items-center justify-center bg-card rounded-xl flex-1 shadow-sm min-w-[25rem] overflow-hidden">
+			<div className={cn("flex flex-col items-center justify-center bg-card rounded-xl flex-1 shadow-sm min-w-[25rem] overflow-hidden",
+				!conversationId && 'lg:flex hidden'
+			)}>
 				<NoChatsSelectedSvg />
 				<p>No chats selected</p>
 			</div>
@@ -40,7 +45,9 @@ export function Messages({
 	};
 
 	return (
-		<div className="flex flex-col bg-card rounded-xl flex-1 shadow-sm min-w-[25rem] overflow-hidden">
+		<div className={cn("flex flex-col bg-card md:rounded-xl flex-1 shadow-sm xl:min-w-[38rem] overflow-hidden",
+			isOpen && 'xl:flex hidden',
+		)}>
 			<Header messages={messages} />
 
 			<div className="relative flex-1">

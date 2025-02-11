@@ -156,7 +156,7 @@ export function Convo({ convo, isArchivePage = false }: ConvoProp) {
         >
           <BsThreeDots />
         </PopoverTrigger>
-        <PopoverContent className="flex flex-col p-1 rounded-lg">
+        <PopoverContent className="flex flex-col p-1 rounded-lg" align="end">
           <button onClick={handleArchiveConvo} className="flex items-center gap-4 w-full text-start p-2 hover:bg-[#e3e3e3] hover:dark:bg-[#3b3a3a] rounded-lg">
             <span className="flex items-center justify-center w-5 h-5">
               <BsFillArchiveFill size={16} />

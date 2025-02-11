@@ -24,6 +24,7 @@ import { HiUserRemove } from "react-icons/hi";
 import { MyConversationsType } from "@/pages/chats";
 import { IoPersonAdd } from "react-icons/io5";
 import { useEffect } from "react";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 type ConvoInformationType = {
   conversation: MessagesType | undefined;
@@ -98,12 +99,17 @@ export function ConvoInformation({ conversation }: ConvoInformationType) {
   return (
     <div
       className={cn(
-        "hidden relative max-w-[19.5rem] w-full",
-        isOpen && "flex flex-col"
+        "hidden relative xl:max-w-[19.5rem] flex-1",
+        isOpen && "flex flex-col",
+        !conversation?.isGroupChat && 'hidden'
       )}
     >
-      <div className="absolute inset-0 bg-card rounded-xl flex-1 shadow-sm p-3 overflow-auto">
-        <div className="flex flex-col">
+      <div className="absolute inset-0 bg-card md:rounded-xl flex-1 shadow-sm p-3 overflow-auto">
+        <div className="relative flex flex-col">
+          <button onClick={() => setIsOpen(false)}>
+            <IoArrowBackOutline size={25} className="absolute left-2 top-2" />
+          </button>
+
           <div className="flex justify-center">
             {!isGroupChat ? (
               <div className="relative">
