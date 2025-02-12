@@ -191,8 +191,9 @@ export function MessagesForm({
       });
       const data = response.data;
       socket.current?.emit("chat", data);
+      queryClient.invalidateQueries({ queryKey: ['my-conversations'] });
       queryClient.setQueryData(['my-conversations', user.id], (old: MyConversationsType[]) => (
-        !old.some((c) => c.id === data.id) ? [...old, data] : old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo)
+        old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo)
       ));
       queryClient.setQueryData(['convo-messages', data.id], data);
       navigate(`/?c=${data.id}`);
@@ -206,6 +207,7 @@ export function MessagesForm({
       });
       const data = response.data;
       socket.current?.emit("chat", data);
+      queryClient.invalidateQueries({ queryKey: ['my-conversations'] });
       queryClient.setQueryData(['my-conversations', user.id], (old: MyConversationsType[]) => (
         old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo)
       ));
@@ -265,7 +267,7 @@ export function MessagesForm({
             </button>
 
             {isOpenGif && (
-              <div onClick={(e) => e.stopPropagation()} className="absolute -left-11 bottom-12">
+              <div onClick={(e) => e.stopPropagation()} className="absolute -left-11 bottom-12 z-[100]">
                 <GifPicker
                   onGifClick={handleSendGift}
                   theme={theme as Theme}

@@ -36,7 +36,7 @@ export function Convo({ convo, isArchivePage = false }: ConvoProp) {
   const isSelf = convo?.userIds?.every((id) => id === user.id);
   const latestMessage = convo?.messages?.[convo.messages.length - 1];
   const otherProfile = convo?.users?.filter(u => u.id !== user.id);
-  const isActive = otherProfile?.some((u) => activeUser.some((active) => active.userId === u.id));
+  const isActive = otherProfile?.some((u) => activeUser?.some((active) => active.userId === u.id));
 
   const userInfo = () => {
     switch (isSelf) {

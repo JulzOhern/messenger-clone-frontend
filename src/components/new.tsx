@@ -92,13 +92,9 @@ export function New() {
       if (data) {
         setText("");
         socket.current?.emit("chat", data);
+        queryClient.invalidateQueries({ queryKey: ['my-conversations'] });
         queryClient.setQueryData(['my-conversations', user.id], (old: MyConversationsType[]) =>
-          !old.some((c) => c.id === data.id)
-            ? [...old, data]
-            : old.map((oldConvo) =>
-              oldConvo.id === data.id ? data : oldConvo
-            )
-        );
+          old.map((oldConvo) => oldConvo.id === data.id ? data : oldConvo));
         queryClient.setQueryData(["convo-messages", data.id], data);
         navigate(`/?c=${data.id}`);
       }
@@ -212,28 +208,27 @@ export function New() {
           </div>
         )}
 
-        {newConvoMessages.isSuccess &&
-          !!newConvoMessages.data?.messages?.length && (
-            <div ref={scrollRef} className="absolute inset-0 overflow-auto">
-              <ConvoMessageAvatar messages={newConvoMessages.data} />
+        {newConvoMessages.isSuccess && !!newConvoMessages.data?.messages?.length && (
+          <div ref={scrollRef} className="absolute inset-0 overflow-auto">
+            <ConvoMessageAvatar messages={newConvoMessages.data} />
 
-              <div className="space-y-1 mt-10 p-4">
-                {newConvoMessages.data?.messages
-                  ?.filter((m) => !m.deletedByIds.includes(user.id))
-                  ?.map((message, index) => (
-                    <MessagesRow
-                      key={message.id}
-                      conversation={newConvoMessages.data}
-                      message={message}
-                      index={index}
-                    />
-                  ))}
-              </div>
+            <div className="space-y-1 mt-10 p-4">
+              {newConvoMessages.data?.messages
+                ?.filter((m) => !m.deletedByIds.includes(user.id))
+                ?.map((message, index) => (
+                  <MessagesRow
+                    key={message.id}
+                    conversation={newConvoMessages.data}
+                    message={message}
+                    index={index}
+                  />
+                ))}
             </div>
-          )}
+          </div>
+        )}
       </div>
 
-      {!!choosenPersons?.length && (
+      {newConvoMessages.isSuccess && !!choosenPersons?.length && (
         <MessagesForm
           handleNewSubmit={handleNewSubmit}
           isNewConvo={choosenPersons?.length > 0}

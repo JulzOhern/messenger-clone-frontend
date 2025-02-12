@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { HiPencil } from "react-icons/hi2";
 import { IoSearch, IoArrowBack } from "react-icons/io5";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 export interface SearchResultMessengerType {
   id: string;
@@ -98,7 +98,6 @@ export function Chats() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   const conversationId = searchParams.get("c");
-  const navigate = useNavigate();
   const pathname = useLocation().pathname;
 
   useEffect(() => {
@@ -143,13 +142,6 @@ export function Chats() {
 
   const notArchiveConvos = myConvo.data?.filter((convo) => !convo.archiveByIds.includes(user.id));
 
-  /*  useEffect(() => {
-     if (myConvo.data?.length && !conversationId && pathname === '/') {
-       const firstConvoId = myConvo.data[0].id;
-       navigate("/?c=" + firstConvoId);
-     };
-   }, [myConvo.data?.length, conversationId, pathname]); */
-
   return (
     <div className={cn("flex flex-col bg-card md:rounded-xl flex-1 lg:max-w-[26rem] shadow-sm",
       conversationId && 'lg:flex hidden',
@@ -180,7 +172,7 @@ export function Chats() {
           <SearchResults key={result.id} result={result} />
         ))
       ) : (
-        !myConvo.data?.length ? (
+        !notArchiveConvos?.length ? (
           <div className="flex items-center justify-center flex-1 text-xl text-muted-foreground font-semibold">
             No chats
           </div>
