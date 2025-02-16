@@ -1,6 +1,7 @@
 import { axiosClient } from "@/lib/axiosClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -59,7 +60,7 @@ export function Login() {
         </button>
       </div>
 
-      <p className="text-center mt-5 text-sm">Don't have an account? <a href="/auth/register" className="text-blue-500">Register</a></p>
+      <p className="text-center mt-5 text-sm">Don't have an account? <Link to="/auth/register" className="text-blue-500">Register</Link></p>
     </form>
   )
 }

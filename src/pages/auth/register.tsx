@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { axiosClient } from '@/lib/axiosClient';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -69,7 +69,7 @@ export function Register() {
         </button>
       </div>
 
-      <p className="text-center mt-5 text-sm">Already have an account? <a href="/auth/login" className="text-blue-500">login</a></p>
+      <p className="text-center mt-5 text-sm">Already have an account? <Link to="/auth/login" className="text-blue-500">login</Link></p>
     </form>
   )
 }
