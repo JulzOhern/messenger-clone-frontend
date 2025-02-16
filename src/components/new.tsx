@@ -44,7 +44,7 @@ export function New() {
     }
     window.addEventListener("click", handleRemove);
     return () => window.removeEventListener("click", handleRemove);
-  }, []);
+  }, [setInputFocus]);
 
   const searchResults = useQuery({
     queryKey: ["search-messenger", search],

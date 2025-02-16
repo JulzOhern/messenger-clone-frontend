@@ -138,7 +138,7 @@ export function ConvoMessages({ messages }: ConvoMessageProps) {
         ref.scrollTop = ref.scrollHeight;
       };
     }
-  }, [messages?.messages, isBottom]);
+  }, [messages?.messages, isBottom, user.id]);
 
   const handleChangeGcName = async () => {
     try {
@@ -253,7 +253,7 @@ export function ConvoMessages({ messages }: ConvoMessageProps) {
         }
       }
     })()
-  }, [isBottom, queryClient, messages?.messages?.length, conversationId]);
+  }, [isBottom, queryClient, messages?.messages?.length, conversationId, user.id]);
 
   // realtime update seen message using socket io
   useEffect(() => {
