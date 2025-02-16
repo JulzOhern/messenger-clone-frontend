@@ -25,7 +25,10 @@ export function Login() {
           description: response.data.error
         });
       };
-      window.location.href = '/';
+
+      if (response.data) {
+        window.location.href = '/';
+      }
     } catch (error: any) {
       console.log(error.message);
     }
