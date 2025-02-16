@@ -4,9 +4,9 @@ import { useOpenConvoInformation } from "@/lib/zustand";
 import { useSocketContext } from "@/providers/socketIoClientProvider";
 import { useUserContext } from "@/providers/userProvider";
 import { ActiveIcon } from "@/utils/activeIcon";
-import { CallSvg } from "@/utils/callSvg";
+/* import { CallSvg } from "@/utils/callSvg"; */
 import { noProfile } from "@/utils/noProfile";
-import { VideoCallSvg } from "@/utils/videoCallSvg";
+/* import { VideoCallSvg } from "@/utils/videoCallSvg"; */
 import { BsThreeDots } from "react-icons/bs";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useSearchParams } from "react-router-dom";
@@ -105,7 +105,7 @@ export default function Header({ messages }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-3 px-[.7rem]">
-        {!isSelf && (
+        {/* {!isSelf && (
           <>
             <div className="flex items-center justify-center hover:bg-[#e3e3e3] hover:dark:bg-[#3b3a3a] h-9 w-9 rounded-full">
               <CallSvg />
@@ -115,7 +115,7 @@ export default function Header({ messages }: HeaderProps) {
               <VideoCallSvg />
             </div>
           </>
-        )}
+        )} */}
 
         {messages?.isGroupChat && (
           <button
