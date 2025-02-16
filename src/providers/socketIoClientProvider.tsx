@@ -27,7 +27,7 @@ export function SocketIoClientProvider({ children }: SocketIoClientProviderProps
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    socket.current = io("http://localhost:9090");
+    socket.current = io(import.meta.env.VITE_SERVER_BASE_URL);
   }, []);
 
   useEffect(() => {
