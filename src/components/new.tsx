@@ -134,7 +134,7 @@ export function New() {
   }, [newConvoMessages.data]);
 
   return (
-    <div className="flex flex-col bg-card md:rounded-xl flex-1 shadow-sm min-w-[25rem] overflow-hidden">
+    <div className="flex flex-col bg-card md:rounded-xl flex-1 shadow-sm xl:min-w-[25rem] overflow-hidden">
       <div className="flex border-b dark:border-[#3b3a3a] border-[#e3e3e3] px-4 py-[.8rem]">
         <div className="pr-5">
           <p>To:</p>

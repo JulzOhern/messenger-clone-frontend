@@ -17,7 +17,7 @@ export default function BottomNavigation() {
   const { setTheme, theme } = useTheme();
 
   return (
-    <div className={cn('flex md:hidden',
+    <div className={cn('absolute bottom-0 inset-x-0 border-red-500 md:hidden',
       conversationId && 'hidden'
     )}>
       <div className='flex items-center justify-evenly py-2 px-2 bg-card flex-1'>
