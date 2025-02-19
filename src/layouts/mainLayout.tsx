@@ -110,7 +110,7 @@ export default function MainLayout() {
   });
 
   return (
-    <div className="flex flex-col md:p-4 min-h-[100dvh] bg-gray-100 dark:bg-black">
+    <div className="flex flex-col md:p-4 min-h-[100dvh] h-full bg-gray-100 dark:bg-black">
       <div className="flex flex-1 gap-4 md:mb-0 mb-16">
         <Sidebar />
         <Outlet />
