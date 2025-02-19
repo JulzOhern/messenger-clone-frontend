@@ -1,3 +1,3 @@
 export function noProfile() {
-  return "https://scontent.fmnl17-6.fna.fbcdn.net/v/t1.30497-1/453178253_471506465671661_2781666950760530985_n.png?stp=dst-png_s100x100&_nc_cat=1&ccb=1-7&_nc_sid=136b72&_nc_ohc=UMzx0jQb2o8Q7kNvgGwkkqF&_nc_oc=AdjcjuODW0SAr6fPTMBfMnEjkbR_Dr0iLIIOjSO-K1faVDG3Uho_z6RCdYIgzJzVixo&_nc_ad=z-m&_nc_cid=0&_nc_zt=24&_nc_ht=scontent.fmnl17-6.fna&_nc_gid=Aah07pPOew7kq0nwUDP7ufo&oh=00_AYBCIfmgcEYA4ewGEgty9_qQ3l2HRe3B3bRBVK1IpjZWBA&oe=67B288BA"
+  return "no_profile.webp"
 }
