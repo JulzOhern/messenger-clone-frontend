@@ -27,7 +27,7 @@ export function Messages({
 
 	if (!conversationId) {
 		return (
-			<div className={cn("flex flex-col items-center justify-center bg-card rounded-xl flex-1 shadow-sm min-w-[25rem] overflow-hidden",
+			<div className={cn("flex flex-col items-center justify-center bg-card rounded-xl flex-1 shadow-sm xl:min-w-[25rem] overflow-hidden",
 				!conversationId && 'lg:flex hidden'
 			)}>
 				<NoChatsSelectedSvg />
@@ -38,7 +38,7 @@ export function Messages({
 
 	if (isLoadingMessages) {
 		return (
-			<div className="flex flex-col justify-center items-center bg-card rounded-xl flex-1 shadow-sm min-w-[25rem] overflow-hidden">
+			<div className="flex flex-col justify-center items-center bg-card rounded-xl flex-1 shadow-sm xl:min-w-[25rem] overflow-hidden">
 				<LuLoaderCircle className="animate-spin text-muted-foreground" size={50} />
 			</div>
 		)
